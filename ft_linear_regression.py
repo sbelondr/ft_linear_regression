@@ -3,19 +3,19 @@
 #                                                         :::      ::::::::    #
 #    ft_linear_regression.py                            :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: samuel <samuel@student.42.fr>              +#+  +:+       +#+         #
+#    By: sbelondr <sbelondr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/05/01 17:17:58 by samuel            #+#    #+#              #
-#    Updated: 2020/05/02 23:23:14 by samuel           ###   ########.fr        #
+#    Created: 2020/05/01 17:17:58 by sbelondr          #+#    #+#              #
+#    Updated: 2020/05/04 09:10:43 by sbelondr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 from pandas import DataFrame, read_csv
 
-import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 '''
 display point and trace
@@ -31,16 +31,23 @@ def display_graph(df, X, Y, t):
     plt.grid()
     plt.scatter(X, Y)
     plt.plot(new_x, new_y, c="green")
-    plt.xlabel('price')
-    plt.ylabel('km')
+    plt.xlabel('km')
+    plt.ylabel('price')
     plt.title("ft_linear_regression")
     plt.show()
+
+def write_file(t0, t1):
+    f = open(".data.txt", "w")
+    f.write(str(t0))
+    f.write("\n")
+    f.write(str(t1))
+    f.close()
 
 '''
 calc theta
 return t0 and t1
 '''
-def gradiant(x, y):
+def train(x, y):
     m = len(x)
     iteration = 10000
     learning_rate = 0.01
@@ -56,8 +63,7 @@ def gradiant(x, y):
         t0 = t0 - learning_rate * tmp_t0
         t1 = t1 - learning_rate * tmp_t1
     t1 = t1 / x_avg
-    # print(t1)
-    # print(t0)
+    write_file(t0, t1)
     return (t0, t1)
 
 '''
@@ -67,10 +73,14 @@ Y = price
 t = t0 and t1
 '''
 def open_csv():
-    df = pd.read_csv("data.csv")
+    try:
+        df = pd.read_csv("data.csv")
+    except IOError:
+        print("File error")
+        sys.exit(-1)
     X = df.iloc[0:len(df),0]
     Y = df.iloc[0:len(df),1]
-    t = gradiant(X, Y)
+    t = train(X, Y)
     display_graph(df, X, Y, t)
 
 def main():
